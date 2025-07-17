@@ -11,21 +11,26 @@ DatadogのAPM Instrumentation for C++はCustom instrumentationをサポートし
 > `dd-trace-cpp` v1.0.0 and later requires a C++17-compatible compiler (e.g., GCC 7+, Clang 5+, MSVC 2017+).  
 > If your existing codebase uses C++11/14, it must be upgraded to compile under C++17 for integration.
 
-Requirement: >= C++17 compiler
-Steps:
+  Requirement: >= C++17 compiler
+- **Supported Platforms**  
+  x86_64 and arm64 Linux.  
+  x86_64 Windows.  
+  arm64 macOS.  
 
-## 1. Tracer(dd-trace-cpp)のダウンロード
+## 実行手順
+
+### 1. Tracer(dd-trace-cpp)のダウンロード
 ```bash
 wget https://github.com/DataDog/dd-trace-cpp/archive/v1.0.0.tar.gz -O dd-trace-cpp.tar.gz
 ```
 
-## 2. Unzip the Tracer
+### 2. Unzip the Tracer
 ```bash
 mkdir dd-trace-cpp
 tar zxvf dd-trace-cpp.tar.gz -C ./dd-trace-cpp/ --strip-components=1
 ```
 
-## 3. Build and install the Tracer
+### 3. Build and install the Tracer
 ```bash
 cd dd-trace-cpp
 cmake -B build -DCMAKE_BUILD_TYPE=Release .
@@ -33,10 +38,10 @@ cmake --build build -j
 cmake --install build
 ```
 
-## 4. 以下を参照してコードを改修
+### 4. 以下を参照してコードを改修
 ※tracer_demo.cppをフルコードとして参考可能
 
-### ①Spanの作成(root span & child span)
+#### ①Spanの作成(root span & child span)
 ```c
 {
   // Create a root span for the current request.
@@ -55,7 +60,7 @@ cmake --install build
   // For example, root_span finishes here.
 ```
 
-### ②Spanの属性追加(user_id,company_idなど)
+#### ②Spanの属性追加(user_id,company_idなど)
  <ローカル定義方式>
  ```c
 // Add tags directly to a span by calling `Span::set_tag`
@@ -89,7 +94,7 @@ auto tracer = datadog::tracing::Tracer(*validated_config);
 auto span = tracer.create_span();
 ```
 
-### ③ エラー(Exception)定義
+#### ③ エラー(Exception)定義
 ```c
 span.set_error(true);
 //エラーのタグ追加
@@ -97,16 +102,16 @@ span.set_error_message("error");
 span.set_error_stack("[EBADF] invalid file");
 span.set_error_type("errno");
 ```
-## 5. 本RepositoryのExample_Codeには詳細のコード例があり、こちらを参照して、APMで計測したい箇所をコード改修
+### 5. 本RepositoryのExample_Codeには詳細のコード例があり、こちらを参照して、APMで計測したい箇所をコード改修
 　・app_demo.cpp: オリジンプログラム
 　・tracer_demo.cpp: Datadog APMをInstrumentation後のコード
 
-## 6. コードを改修後に再度ビルド、以下はtracer_demo.cppのビルドコマンド例
+### 6. コードを改修後に再度ビルド、以下はtracer_demo.cppのビルドコマンド例
 ```bash
 g++ -std=c++17 -I/usr/local/include -L/usr/local/lib   -o tracer_demo tracer_demo.cpp   -ldd_trace_cpp-static -lcurl -lpthread -ldl
 ```
 
-## 7. ビルド後のアプリを実行し、Datadog画面でTraceを確認
+### 7. ビルド後のアプリを実行し、Datadog画面でTraceを確認
 ```bash
 ./tracer_demo
 ```
