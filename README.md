@@ -102,9 +102,10 @@ span.set_error_message("error");
 span.set_error_stack("[EBADF] invalid file");
 span.set_error_type("errno");
 ```
-### 5. 本RepositoryのExample_Codeには詳細のコード例があり、こちらを参照して、APMで計測したい箇所をコード改修
-　・app_demo.cpp: オリジンプログラム
-　・tracer_demo.cpp: Datadog APMをInstrumentation後のコード
+### 5. 本RepositoryのExample_Codeには詳細のコード例があり、こちらを参照して、APMで計測したい箇所をコード改修  
+　・app_demo.cpp: オリジンプログラム  
+　・tracer_demo.cpp: Datadog APMをInstrumentation後のコード  
+　・construction.txt: app_demoの呼び出し構造、特に利用する必要はない  
 
 ### 6. コードを改修後に再度ビルド、以下はtracer_demo.cppのビルドコマンド例
 ```bash
