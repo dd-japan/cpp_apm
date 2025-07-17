@@ -31,25 +31,27 @@ void authenticate_user(dd::Span& parent_span) {
 }
 
 // Models a database fetch with a traceable span.
-void fetch_from_db(dd::Span& parent_span) {
+void fetch_from_db(dd::Span& parent_span, const std::string& user_id) {
   auto span = parent_span.create_child(); //start a child span
   span.set_name("fetch_from_db");         //set a span attribute 
   span.set_resource_name("db.query");     //set a span attribute
   span.set_tag("db.table", "users");      //set a span tag
+  span.set_tag("user_id", user_id);       //add user_id to span for context
   
-  std::cout << "[fetch_from_db] Fetching user profile from database..." << std::endl;
+  std::cout << "[fetch_from_db] Fetching user profile for user_id = " << user_id << std::endl;
 }
 
 // High-level span for loading user profile; internally calls DB layer.
-void load_user_profile(dd::Span& parent_span) {
+void load_user_profile(dd::Span& parent_span, const std::string& user_id) {
   auto span = parent_span.create_child();  //start a child span
   span.set_name("load_user_profile");          //set a span attribute 
   span.set_resource_name("user.load_profile");  //set a span attribute
   span.set_tag("profile.source", "primary");     //set a span tag
+  span.set_tag("user_id", user_id);             //set user_id tag
 
-  std::cout << "[load_user_profile] Loading user profile..." << std::endl;
-  fetch_from_db(span);
-  std::cout << "[load_user_profile] Profile loaded." << std::endl;
+  std::cout << "[load_user_profile] Loading user profile for user_id = " << user_id << std::endl;
+  fetch_from_db(span, user_id);
+  std::cout << "[load_user_profile] Profile loaded for user_id = " << user_id << std::endl;
 }
 
 // Validates user input; modeled as a standalone span.
@@ -118,9 +120,11 @@ int main() {
 
   std::cout << "[main] Starting user session workflow..." << std::endl;
 
+  std::string user_id = "user123";                  // User ID as a parameter
+
   // Pass root span into child business logic functions
   authenticate_user(root_span);
-  load_user_profile(root_span);
+  load_user_profile(root_span, user_id);
   process_data(root_span);
 
   std::cout << "[main] Session workflow completed." << std::endl;
