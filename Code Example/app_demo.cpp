@@ -13,14 +13,14 @@ void authenticate_user() {
   std::cout << "[authenticate_user] Authentication successful." << std::endl;
 }
 
-void fetch_from_db() {
-  std::cout << "[fetch_from_db] Fetching user profile from database..." << std::endl;
+void fetch_from_db(const std::string& user_id) {
+  std::cout << "[fetch_from_db] Fetching user profile for user_id = " << user_id << std::endl;
 }
 
-void load_user_profile() {
-  std::cout << "[load_user_profile] Loading user profile..." << std::endl;
-  fetch_from_db();
-  std::cout << "[load_user_profile] Profile loaded." << std::endl;
+void load_user_profile(const std::string& user_id) {
+  std::cout << "[load_user_profile] Loading user profile for user_id = " << user_id << std::endl;
+  fetch_from_db(user_id);
+  std::cout << "[load_user_profile] Profile loaded for user_id = " << user_id << std::endl;
 }
 
 void validate_input() {
@@ -46,8 +46,10 @@ void process_data() {
 int main() {
   std::cout << "[main] Starting user session workflow..." << std::endl;
 
+  std::string user_id = "user123";  // Example user ID
+
   authenticate_user();
-  load_user_profile();
+  load_user_profile(user_id);
   process_data();
 
   std::cout << "[main] Session workflow completed." << std::endl;
