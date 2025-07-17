@@ -10,20 +10,20 @@ namespace dd = datadog::tracing;
 // Create a child span under the provided parent span.
 // This models the internal step "verify_token" as part of a larger operation.
 void verify_token(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("verify_token");                         // Logical operation name
-  span.set_resource_name("auth.verify_token");           // Trace resource name for grouping
-  span.set_tag("auth.type", "JWT");                      // Custom tag: token type
+  auto span = parent_span.create_child();            //start a child span
+  span.set_name("verify_token");                         // set a span attribute(Logical operation name)
+  span.set_resource_name("auth.verify_token");           // set a span attribute(Trace resource name for grouping)
+  span.set_tag("auth.type", "JWT");                      // set a span tag(Custom tag: token type)
 
   std::cout << "[verify_token] Verifying JWT token..." << std::endl;
 }
 
 // Models user authentication as a span, and links nested verification span.
 void authenticate_user(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("authenticate_user");
-  span.set_resource_name("auth.login");
-  span.set_tag("auth.method", "password");
+  auto span = parent_span.create_child();    //start a child span
+  span.set_name("authenticate_user");         //set a span attribute 
+  span.set_resource_name("auth.login");     //set a span attribute
+  span.set_tag("auth.method", "password");    //set a span tag
 
   std::cout << "[authenticate_user] Starting authentication..." << std::endl;
   verify_token(span);                                    // Pass this span as parent to nested function
@@ -32,20 +32,20 @@ void authenticate_user(dd::Span& parent_span) {
 
 // Models a database fetch with a traceable span.
 void fetch_from_db(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("fetch_from_db");
-  span.set_resource_name("db.query");
-  span.set_tag("db.table", "users");
+  auto span = parent_span.create_child(); //start a child span
+  span.set_name("fetch_from_db");         //set a span attribute 
+  span.set_resource_name("db.query");     //set a span attribute
+  span.set_tag("db.table", "users");      //set a span tag
   
   std::cout << "[fetch_from_db] Fetching user profile from database..." << std::endl;
 }
 
 // High-level span for loading user profile; internally calls DB layer.
 void load_user_profile(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("load_user_profile");
-  span.set_resource_name("user.load_profile");
-  span.set_tag("profile.source", "primary");
+  auto span = parent_span.create_child();  //start a child span
+  span.set_name("load_user_profile");          //set a span attribute 
+  span.set_resource_name("user.load_profile");  //set a span attribute
+  span.set_tag("profile.source", "primary");     //set a span tag
 
   std::cout << "[load_user_profile] Loading user profile..." << std::endl;
   fetch_from_db(span);
@@ -54,10 +54,10 @@ void load_user_profile(dd::Span& parent_span) {
 
 // Validates user input; modeled as a standalone span.
 void validate_input(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("validate_input");
-  span.set_resource_name("form.validate");
-  span.set_tag("form.type", "payment");
+  auto span = parent_span.create_child();   //start a child span
+  span.set_name("validate_input");           //set a span attribute 
+  span.set_resource_name("form.validate");   //set a span attribute
+  span.set_tag("form.type", "payment");     //set a span tag
 
   std::cout << "[validate_input] Validating form input..." << std::endl;
 }
@@ -65,10 +65,10 @@ void validate_input(dd::Span& parent_span) {
 // Simulates an external service call that throws an error.
 // The span will be created before the exception.
 void risky_operation(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("risky_operation");
-  span.set_resource_name("external.billing_call");
-  span.set_tag("service", "billing-api");
+  auto span = parent_span.create_child();     //start a child span
+  span.set_name("risky_operation");           //set a span attribute
+  span.set_resource_name("external.billing_call");  //set a span attribute
+  span.set_tag("service", "billing-api");  //set a span tag
 
   std::cout << "[risky_operation] Calling external billing API..." << std::endl;
 
@@ -77,10 +77,10 @@ void risky_operation(dd::Span& parent_span) {
 
 // Main business logic handler that captures and marks exceptions as span errors.
 void process_data(dd::Span& parent_span) {
-  auto span = parent_span.create_child();
-  span.set_name("process_data");
-  span.set_resource_name("business.process");
-  span.set_tag("component", "payment");
+  auto span = parent_span.create_child();     //start a child span
+  span.set_name("process_data");              //set a span attribute
+  span.set_resource_name("business.process"); //set a span attribute
+  span.set_tag("component", "payment");       //set a span tag
 
   std::cout << "[process_data] Processing payment data..." << std::endl;
   validate_input(span);
@@ -99,7 +99,7 @@ void process_data(dd::Span& parent_span) {
 }
 
 int main() {
-  dd::TracerConfig config;
+  dd::TracerConfig config;                               // To define the config of the root trace
   config.service = "cpp-payment-app";                    // The service name shown in Datadog
 
   // Validate and apply tracer config
@@ -109,12 +109,12 @@ int main() {
     return 1;
   }
 
-  dd::Tracer tracer{*validated};
+  dd::Tracer tracer{*validated};                        // Define a tracer from the main entry
 
   // Create root span for the entire request/session context
-  auto root_span = tracer.create_span();
-  root_span.set_name("main_flow");
-  root_span.set_resource_name("user_session");
+  auto root_span = tracer.create_span();            // Create the root span
+  root_span.set_name("main_flow");                  // Set a root span attribute(Logical operation name)
+  root_span.set_resource_name("user_session");      // Set a root span attribute(Trace resource name for grouping)
 
   std::cout << "[main] Starting user session workflow..." << std::endl;
 
