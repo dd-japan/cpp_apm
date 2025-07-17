@@ -1,8 +1,7 @@
-# cpp_apm
-DatadogのAPM Instrumentation for C++はCustom instrumentationをサポートしております。  
-本章では、詳細な手順をご紹介します。
-
 # Datadog APM Tracing with dd-trace-cpp
+
+DatadogのAPM Instrumentation for C++はCustom instrumentationをサポートしております。  
+本章では、詳細なInstrumentationの手順をご紹介します。
 
 ## 📌 Requirement
 
@@ -98,18 +97,25 @@ span.set_error_message("error");
 span.set_error_stack("[EBADF] invalid file");
 span.set_error_type("errno");
 ```
+## 5. 本RepositoryのExample_Codeには詳細のコード例があり、こちらを参照して、APMで計測したい箇所をコード改修
+　・app_demo.cpp: オリジンプログラム
+　・tracer_demo.cpp: Datadog APMをInstrumentation後のコード
 
-## 5. コードを改修後に再度ビルド、以下はtracer_demo.cppのビルド例
+## 6. コードを改修後に再度ビルド、以下はtracer_demo.cppのビルドコマンド例
 ```bash
 g++ -std=c++17 -I/usr/local/include -L/usr/local/lib   -o tracer_demo tracer_demo.cpp   -ldd_trace_cpp-static -lcurl -lpthread -ldl
 ```
 
-## 6. ビルド後のアプリを実行し、Datadog画面でTraceを確認
+## 7. ビルド後のアプリを実行し、Datadog画面でTraceを確認
 ```bash
 ./tracer_demo
 ```
+![Datadog APM画面](./images/apm_trace.png)
 
-📎 Related Links  
+
+
+
+## 📎 Related Links  
 [dd-trace-cpp GitHub Repo](https://github.com/DataDog/dd-trace-cpp)
 
 [Datadog APM Documentation](https://docs.datadoghq.com/tracing/trace_collection/custom_instrumentation/cpp/dd-api?tab=globally)
